@@ -1,5 +1,5 @@
 using UnityEngine;
-public class CameraFollow : MonoBehaviour
+public class SmoothFollow : MonoBehaviour
 {
     public Transform target;
     public Vector3 offset = new Vector3(0, 2, -4);

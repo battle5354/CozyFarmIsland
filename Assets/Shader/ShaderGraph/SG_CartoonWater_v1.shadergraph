@@ -2892,8 +2892,8 @@
     "m_ObjectId": "458f0fd95b9a440eb64ae15aff46789e",
     "m_Title": "Wave size & speed",
     "m_Position": {
-        "x": -2642.000244140625,
-        "y": -891.0001220703125
+        "x": -2642.0,
+        "y": -891.0
     }
 }
 
@@ -4407,8 +4407,8 @@
     "m_ObjectId": "7e33dde7fbea408bb7470a2a66cf54b0",
     "m_Title": "Color Correction",
     "m_Position": {
-        "x": -940.9998779296875,
-        "y": 1065.0001220703125
+        "x": -941.0,
+        "y": 1065.0
     }
 }
 
@@ -4687,8 +4687,8 @@
     "m_ObjectId": "853fe4b995b647dfb0c0efa1c4cbb189",
     "m_Title": "Alpha Correction",
     "m_Position": {
-        "x": -378.0002136230469,
-        "y": 1519.0001220703125
+        "x": -378.0,
+        "y": 1519.0
     }
 }
 
@@ -5458,7 +5458,7 @@
     "m_ObjectId": "a3fd9038abec48c5b8a45285de4a0cfe",
     "m_Title": "Ripple adjustment",
     "m_Position": {
-        "x": -1909.9998779296875,
+        "x": -1910.0,
         "y": 189.0
     }
 }
@@ -6366,7 +6366,7 @@
     "m_ObjectId": "c4ecaaffdda94bfcb60528c7ff2a9340",
     "m_Title": "Distance-to-camera",
     "m_Position": {
-        "x": -2074.000244140625,
+        "x": -2074.0,
         "y": 1096.0
     }
 }
