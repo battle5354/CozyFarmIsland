@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovementBackup : MonoBehaviour
 {
     [Header("Movement Settings")]
     [SerializeField] private float walkSpeed = 3.5f;
@@ -13,6 +13,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float jumpHeight = 1.4f;
     [SerializeField] private float groundedVerticalSpeed = -2.5f;
     [SerializeField] private float maxAirJumpHeightMultiplier = 1f;
+    //[SerializeField] private float groundGraceTime = 0.12f;
+    //[SerializeField] private float fallConfirmTime = 0.12f;
+    //[SerializeField] private float fallVelocityThreshold = -1.5f;
 
     [Header("References")]
     [SerializeField] private Transform cameraTransform;
@@ -26,11 +29,13 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 horizontalMove;
     private float moveSpeed;
     private float jumpStartY;
+    //private float lastGroundedTime;
     private bool isOnGround;
     private bool wasOnGround;
     private bool isMoving;
     private bool isRunning;
-    public bool IsMoving => isMoving;
+    //private bool isFalling;
+    //private float fallTime;
 
 
     private void Awake()
@@ -56,6 +61,7 @@ public class PlayerMovement : MonoBehaviour
         HandleMovement();
         HandleGravityAndJump();
         ApplyMovement();
+        //UpdateFallingState();
         UpdateAnimator();
     }
 
@@ -179,7 +185,25 @@ public class PlayerMovement : MonoBehaviour
         controller.Move(totalMove * Time.deltaTime);
         // Grounded state becomes correct only after controller.Move()
         isOnGround = controller.isGrounded;
+
+        if (isOnGround)
+        {
+            //lastGroundedTime = Time.time;
+        }
     }
+
+    /*private void UpdateFallingState()
+    {
+        bool recentlyGrounded = Time.time - lastGroundedTime <= groundGraceTime;
+        bool fallingCandidate = !recentlyGrounded && velocity.y < fallVelocityThreshold;
+
+        if (fallingCandidate)
+            fallTime += Time.deltaTime;
+        else
+            fallTime = 0f;
+
+        isFalling = fallTime >= fallConfirmTime;
+    }*/
 
     private void UpdateAnimator()
     {
