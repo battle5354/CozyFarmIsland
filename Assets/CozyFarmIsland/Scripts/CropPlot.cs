@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class CropPlot : MonoBehaviour
+public class CropPlot : MonoBehaviour, IInteractable
 {
     public enum CropState
     {
@@ -28,6 +28,9 @@ public class CropPlot : MonoBehaviour
     [Header("UI")]
     [SerializeField] private GameObject interactPrompt;
     [SerializeField] private RadialTimerUI radialTimer;
+
+    [Header("Interaction")]
+    [SerializeField] private Transform interactionPoint;
 
     [Header("Harvest")]
     [SerializeField] private Transform pickupSpawnPoint;
@@ -65,6 +68,9 @@ public class CropPlot : MonoBehaviour
 
         if (pickupPrefab == null)
             Debug.LogError("Pickup prefab is missing!", this);
+
+        if (interactionPoint == null)
+            Debug.LogError("InteractionPoint is not assigned. CropPlot transform will be used instead.", this);
     }
 
     private void Start()
@@ -102,6 +108,11 @@ public class CropPlot : MonoBehaviour
     {
         isSelected = selected;
         RefreshSelectionUI();
+    }
+
+    public Transform GetInteractionPoint()
+    {
+        return interactionPoint != null ? interactionPoint : transform;
     }
 
     // =========================
@@ -279,7 +290,7 @@ public class CropPlot : MonoBehaviour
             yield break;
         }
 
-        radialTimer.Play(duration, fillFromZeroToOne: true);
+        radialTimer.Play(duration, true);
         yield return new WaitForSeconds(duration);
         radialTimer.StopAndHide();
     }

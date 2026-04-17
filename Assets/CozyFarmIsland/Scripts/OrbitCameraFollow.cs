@@ -25,7 +25,6 @@ public class OrbitCameraFollow : MonoBehaviour
     [Header("Collision")]
     [SerializeField] private LayerMask collisionMask;
     [SerializeField] private float cameraCollisionRadius = 0.2f;
-    [SerializeField] private float collisionOffset = 0.1f;
 
     private float targetYaw;
     private float targetPitch;
@@ -39,9 +38,6 @@ public class OrbitCameraFollow : MonoBehaviour
     private float currentDistance;
     private float distanceVelocity;
     private Vector3 followVelocity;
-    private Vector3 lastValidPosition;
-    private Quaternion lastValidRotation;
-    private bool hasValidCameraPose;
 
     private void Start()
     {
@@ -55,10 +51,6 @@ public class OrbitCameraFollow : MonoBehaviour
 
         targetDistance = distance;
         currentDistance = distance;
-
-        lastValidPosition = transform.position;
-        lastValidRotation = transform.rotation;
-        hasValidCameraPose = true;
     }
 
     private void LateUpdate()
