@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9124805618909167600}
   - component: {fileID: 454588809527505505}
+  - component: {fileID: 3118806171191034631}
   m_Layer: 0
   m_Name: ToolShovel
   m_TagString: Untagged
@@ -55,6 +56,21 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &3118806171191034631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 625754088340331031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94e7691942d8bc649ba30a0009c87418, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 454588809527505505}
+  toolVfx: {fileID: 0}
+  toolActionIndex: 1
 --- !u!1 &7926960820604794065
 GameObject:
   m_ObjectHideFlags: 0

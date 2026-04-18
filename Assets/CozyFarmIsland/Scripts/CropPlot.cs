@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class CropPlot : MonoBehaviour, IInteractable
@@ -11,6 +12,7 @@ public class CropPlot : MonoBehaviour, IInteractable
         Stage02,
         NeedsWater2,
         Ready,
+        AwaitingPickup,
         Busy
     }
 
@@ -27,7 +29,8 @@ public class CropPlot : MonoBehaviour, IInteractable
 
     [Header("UI")]
     [SerializeField] private GameObject interactPrompt;
-    [SerializeField] private RadialTimerUI radialTimer;
+    [SerializeField] private RadialTimerUI actionTimer;
+    [SerializeField] private RadialTimerUI growTimer;
 
     [Header("Interaction")]
     [SerializeField] private Transform interactionPoint;
@@ -60,7 +63,7 @@ public class CropPlot : MonoBehaviour, IInteractable
         if (interactPrompt == null)
             Debug.LogError("InteractPrompt is missing!", this);
 
-        if (radialTimer == null)
+        if (actionTimer == null)
             Debug.LogError("RadialTimerUI is missing!", this);
 
         if (pickupSpawnPoint == null)
@@ -123,9 +126,12 @@ public class CropPlot : MonoBehaviour, IInteractable
     {
         isBusy = true;
         RefreshSelectionUI();
-        ClearTool();
+        StartToolAction();
 
         yield return StartCoroutine(DoActionTimer(actionTime));
+
+        StopToolAction();
+        ClearTool();
 
         SetState(CropState.Stage01);
 
@@ -139,25 +145,25 @@ public class CropPlot : MonoBehaviour, IInteractable
     {
         isBusy = true;
         RefreshSelectionUI();
+        StartToolAction();
+
+        yield return StartCoroutine(DoActionTimer(actionTime));
+
+        StopToolAction();
         ClearTool();
 
         CropState stateBeforeAction = currentState;
 
-        yield return StartCoroutine(DoActionTimer(actionTime));
-
         if (stateBeforeAction == CropState.NeedsWater1)
         {
             SetState(CropState.Stage02);
-
             isBusy = false;
             RefreshSelectionUI();
-
             StartCoroutine(GrowRoutine(growTime, CropState.NeedsWater2));
         }
         else if (stateBeforeAction == CropState.NeedsWater2)
         {
             SetState(CropState.Ready);
-
             isBusy = false;
             RefreshSelectionUI();
         }
@@ -167,13 +173,15 @@ public class CropPlot : MonoBehaviour, IInteractable
     {
         isBusy = true;
         RefreshSelectionUI();
-        ClearTool();
+        StartToolAction();
 
         yield return StartCoroutine(DoActionTimer(actionTime));
 
+        StopToolAction();
+        ClearTool();
+
         SpawnPickup();
         SetState(CropState.Empty);
-
         isBusy = false;
         RefreshSelectionUI();
     }
@@ -184,15 +192,15 @@ public class CropPlot : MonoBehaviour, IInteractable
 
     private IEnumerator GrowRoutine(float duration, CropState nextState)
     {
-        if (radialTimer == null)
+        if (actionTimer == null)
         {
             Debug.LogError("RadialTimerUI is not assigned!", this);
             yield break;
         }
 
-        radialTimer.Play(duration, true);
+        growTimer.Play(duration, true);
         yield return new WaitForSeconds(duration);
-        radialTimer.StopAndHide();
+        growTimer.StopAndHide();
 
         SetState(nextState);
         RefreshSelectionUI();
@@ -217,9 +225,19 @@ public class CropPlot : MonoBehaviour, IInteractable
             return;
         }
 
-        stage01.SetActive(currentState == CropState.Stage01);
-        stage02.SetActive(currentState == CropState.Stage02);
-        stage03.SetActive(currentState == CropState.Ready);
+        stage01.SetActive(
+            currentState == CropState.Stage01 ||
+            currentState == CropState.NeedsWater1
+        );
+
+        stage02.SetActive(
+            currentState == CropState.Stage02 ||
+            currentState == CropState.NeedsWater2
+        );
+
+        stage03.SetActive(
+            currentState == CropState.Ready
+        );
     }
 
     private void UpdateTool()
@@ -239,6 +257,9 @@ public class CropPlot : MonoBehaviour, IInteractable
 
             case CropState.Ready:
                 ShowTool(sicklePrefab);
+                break;
+
+            case CropState.AwaitingPickup:
                 break;
         }
     }
@@ -267,6 +288,10 @@ public class CropPlot : MonoBehaviour, IInteractable
             toolAnchor.rotation,
             toolAnchor
         );
+
+
+        if (currentToolInstance.TryGetComponent<ToolActionAnimator>(out var toolAnimator))
+            toolAnimator.StartIdle();
     }
 
     private void ClearTool()
@@ -278,22 +303,44 @@ public class CropPlot : MonoBehaviour, IInteractable
         }
     }
 
+    private void StartToolAction()
+    {
+        if (TryGetToolAnimator(out var animator))
+            animator.StartAction();
+    }
+
+    private void StopToolAction()
+    {
+        if (TryGetToolAnimator(out var animator))
+            animator.StopAction();
+    }
+
+    private bool TryGetToolAnimator(out ToolActionAnimator animator)
+    {
+        if (currentToolInstance != null)
+            return currentToolInstance.TryGetComponent(out animator);
+
+        animator = null;
+        return false;
+    }
+
     // =========================
     // UI (TIMER)
     // =========================
 
     private IEnumerator DoActionTimer(float duration)
     {
-        if (radialTimer == null)
+        if (actionTimer == null)
         {
             Debug.LogError("RadialTimerUI is not assigned!", this);
             yield break;
         }
 
-        radialTimer.Play(duration, true);
+        actionTimer.Play(duration, true);
         yield return new WaitForSeconds(duration);
-        radialTimer.StopAndHide();
+        actionTimer.StopAndHide();
     }
+
 
     // =========================
     // PICKUP
@@ -313,11 +360,11 @@ public class CropPlot : MonoBehaviour, IInteractable
             return;
         }
 
-        Instantiate(
+        var pickup = Instantiate(
             pickupPrefab,
             pickupSpawnPoint.position,
             pickupSpawnPoint.rotation
-        );
+            );
     }
 
     // =========================
