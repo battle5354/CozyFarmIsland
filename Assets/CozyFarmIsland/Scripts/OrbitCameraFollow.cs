@@ -39,6 +39,29 @@ public class OrbitCameraFollow : MonoBehaviour
     private float distanceVelocity;
     private Vector3 followVelocity;
 
+    private void OnValidate()
+    {
+        if (target == null)
+        {
+            Debug.LogWarning("OrbitCameraFollow: Target is not assigned!", this);
+        }
+    }
+    private void Awake()
+    {
+        if (target == null)
+        {
+            var player = FindAnyObjectByType<PlayerInteractor>();
+
+            if (player != null)
+                target = player.transform;
+        }
+
+        if (target == null)
+        {
+            Debug.LogError("OrbitCameraFollow: Target is not assigned!", this);
+            enabled = false;
+        }
+    }
     private void Start()
     {
         Vector3 angles = transform.eulerAngles;

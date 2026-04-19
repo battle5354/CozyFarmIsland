@@ -1,9 +1,10 @@
 using System.Collections;
-using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class CropPlot : MonoBehaviour, IInteractable
 {
+    private const float ACTION_TIME = 5f;
+    private const float GROW_TIME = 10f;
     public enum CropState
     {
         Empty,
@@ -39,11 +40,8 @@ public class CropPlot : MonoBehaviour, IInteractable
     [SerializeField] private Transform pickupSpawnPoint;
     [SerializeField] private GameObject pickupPrefab;
 
-    [Header("Timings")]
-    [SerializeField] private float actionTime = 2f;
-    [SerializeField] private float growTime = 10f;
-
     private CropState currentState = CropState.Empty;
+    private PlayerInteractor playerInteractor;
 
     private GameObject currentToolInstance;
     private bool isBusy = false;
@@ -78,6 +76,8 @@ public class CropPlot : MonoBehaviour, IInteractable
 
     private void Start()
     {
+        Application.targetFrameRate = 60;
+        playerInteractor = FindFirstObjectByType<PlayerInteractor>();
         SetState(CropState.Empty);
         RefreshSelectionUI();
     }
@@ -89,6 +89,9 @@ public class CropPlot : MonoBehaviour, IInteractable
     public void Interact()
     {
         if (isBusy) return;
+
+        if (playerInteractor != null && playerInteractor.HasItem)
+            return;
 
         switch (currentState)
         {
@@ -109,8 +112,19 @@ public class CropPlot : MonoBehaviour, IInteractable
 
     public void SetSelected(bool selected)
     {
+        if (isSelected == selected)
+            return;
+
         isSelected = selected;
         RefreshSelectionUI();
+    }
+
+    private bool CanInteractInCurrentState()
+    {
+        return currentState == CropState.Empty
+            || currentState == CropState.NeedsWater1
+            || currentState == CropState.NeedsWater2
+            || currentState == CropState.Ready;
     }
 
     public Transform GetInteractionPoint()
@@ -128,38 +142,35 @@ public class CropPlot : MonoBehaviour, IInteractable
         RefreshSelectionUI();
         StartToolAction();
 
-        yield return StartCoroutine(DoActionTimer(actionTime));
+        yield return StartCoroutine(DoActionTimer(ACTION_TIME));
 
         StopToolAction();
-        ClearTool();
-
         SetState(CropState.Stage01);
 
         isBusy = false;
         RefreshSelectionUI();
 
-        StartCoroutine(GrowRoutine(growTime, CropState.NeedsWater1));
+        StartCoroutine(GrowRoutine(GROW_TIME, CropState.NeedsWater1));
     }
 
     private IEnumerator WaterRoutine()
     {
+        CropState stateBeforeAction = currentState;
+
         isBusy = true;
         RefreshSelectionUI();
         StartToolAction();
 
-        yield return StartCoroutine(DoActionTimer(actionTime));
+        yield return StartCoroutine(DoActionTimer(ACTION_TIME));
 
         StopToolAction();
-        ClearTool();
-
-        CropState stateBeforeAction = currentState;
 
         if (stateBeforeAction == CropState.NeedsWater1)
         {
             SetState(CropState.Stage02);
             isBusy = false;
             RefreshSelectionUI();
-            StartCoroutine(GrowRoutine(growTime, CropState.NeedsWater2));
+            StartCoroutine(GrowRoutine(GROW_TIME, CropState.NeedsWater2));
         }
         else if (stateBeforeAction == CropState.NeedsWater2)
         {
@@ -175,13 +186,12 @@ public class CropPlot : MonoBehaviour, IInteractable
         RefreshSelectionUI();
         StartToolAction();
 
-        yield return StartCoroutine(DoActionTimer(actionTime));
+        yield return StartCoroutine(DoActionTimer(ACTION_TIME));
 
         StopToolAction();
-        ClearTool();
 
         SpawnPickup();
-        SetState(CropState.Empty);
+        SetState(CropState.AwaitingPickup);
         isBusy = false;
         RefreshSelectionUI();
     }
@@ -289,9 +299,8 @@ public class CropPlot : MonoBehaviour, IInteractable
             toolAnchor
         );
 
-
         if (currentToolInstance.TryGetComponent<ToolActionAnimator>(out var toolAnimator))
-            toolAnimator.StartIdle();
+            toolAnimator.SetInteractionReady(false);
     }
 
     private void ClearTool()
@@ -365,6 +374,17 @@ public class CropPlot : MonoBehaviour, IInteractable
             pickupSpawnPoint.position,
             pickupSpawnPoint.rotation
             );
+
+        if (pickup.TryGetComponent(out PickupItem item))
+        {
+            item.Init(this);
+        }
+    }
+
+    public void OnPickupCollected()
+    {
+        SetState(CropState.Empty);
+        RefreshSelectionUI();
     }
 
     // =========================
@@ -373,15 +393,14 @@ public class CropPlot : MonoBehaviour, IInteractable
 
     private void RefreshSelectionUI()
     {
-        if (interactPrompt == null)
-            return;
+        bool canCropInteract = CanInteractInCurrentState();
+        bool isAwaitingPickup = currentState == CropState.AwaitingPickup;
 
-        bool canInteract =
-            currentState == CropState.Empty ||
-            currentState == CropState.NeedsWater1 ||
-            currentState == CropState.NeedsWater2 ||
-            currentState == CropState.Ready;
+        bool showPrompt = isSelected && !isBusy && (canCropInteract || isAwaitingPickup);
 
-        interactPrompt.SetActive(isSelected && !isBusy && canInteract);
+        interactPrompt.SetActive(showPrompt);
+
+        if (TryGetToolAnimator(out var toolAnimator))
+            toolAnimator.SetInteractionReady(isSelected && !isBusy && canCropInteract);
     }
 }

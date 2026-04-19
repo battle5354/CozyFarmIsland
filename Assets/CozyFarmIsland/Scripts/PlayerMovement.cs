@@ -31,6 +31,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isMoving;
     private bool isRunning;
     public bool IsMoving => isMoving;
+    public bool LockRotation { get; set; }
 
 
     private void Awake()
@@ -108,7 +109,7 @@ public class PlayerMovement : MonoBehaviour
             moveSpeed = speedPercent * locomotionSign;
 
             // ROTATION
-            if (facingDirection.sqrMagnitude > 0.001f)
+            if (!LockRotation && facingDirection.sqrMagnitude > 0.001f)
             {
                 Quaternion targetRotation = Quaternion.LookRotation(facingDirection);
 
