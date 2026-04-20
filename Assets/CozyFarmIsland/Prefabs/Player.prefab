@@ -102,7 +102,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 3
+  m_Radius: 2
   m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &2981824736908456032
 MonoBehaviour:
@@ -126,7 +126,7 @@ MonoBehaviour:
   minLookDot: 0.35
   distanceWeight: 0.4
   lookWeight: 0.6
-  switchThreshold: 0.1
+  switchThreshold: 0.05
   carryAnchor: {fileID: 1124142454465782781}
   idleThreshold: 30
 --- !u!1 &8261663530533039982
@@ -154,7 +154,7 @@ Transform:
   m_GameObject: {fileID: 8261663530533039982}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.9000001, z: 0.75}
+  m_LocalPosition: {x: 0, y: 0.6, z: 0.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

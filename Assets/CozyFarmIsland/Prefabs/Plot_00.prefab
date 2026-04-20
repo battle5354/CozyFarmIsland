@@ -111,7 +111,7 @@ GameObject:
   - component: {fileID: 7314069919135194453}
   - component: {fileID: 582759914818769620}
   - component: {fileID: 8332149087520800935}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: TimerFill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -159,9 +159,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 0.92147976, b: 0.20392156, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
+  m_Maskable: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -186,7 +186,7 @@ GameObject:
   - component: {fileID: 7140117826876621452}
   - component: {fileID: 3968877202270312967}
   - component: {fileID: 4859076134478259004}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: E_Outline
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -260,7 +260,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5321189100828984307}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -296,7 +296,7 @@ GameObject:
   - component: {fileID: 1798550082367860398}
   - component: {fileID: 6939794283618471131}
   - component: {fileID: 7975065108211590390}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -342,7 +342,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_VertexColorAlwaysGammaSpace: 0
+  m_VertexColorAlwaysGammaSpace: 1
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -412,7 +412,7 @@ GameObject:
   - component: {fileID: 4729844790947100157}
   - component: {fileID: 966745553897669074}
   - component: {fileID: 5762433710455197490}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: E_Back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -460,7 +460,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.72867954, b: 0.5330188, a: 1}
+  m_Color: {r: 1, g: 0.7294118, b: 0.53333336, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 0
@@ -489,7 +489,7 @@ GameObject:
   - component: {fileID: 1971946767319987832}
   - component: {fileID: 936373452777032097}
   - component: {fileID: 4634205003958983457}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: GrowRadialTimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -576,7 +576,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 794320560768711903}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: UIAnchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -610,7 +610,7 @@ GameObject:
   - component: {fileID: 3057419825290618826}
   - component: {fileID: 3980210031176646145}
   - component: {fileID: 3789409635940257747}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: TimerFill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -658,9 +658,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.2997411, g: 1, b: 0.2028302, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
+  m_Maskable: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -746,7 +746,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8107536787267964884}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: InteractionPrompt_E
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -817,7 +817,7 @@ GameObject:
   - component: {fileID: 1702138104578631067}
   - component: {fileID: 7524514340925757786}
   - component: {fileID: 476634561436883508}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: ActionRadialTimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -972,7 +972,7 @@ GameObject:
   - component: {fileID: 9010261831452562363}
   - component: {fileID: 5908996708128186300}
   - component: {fileID: 5531840694890346917}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: E_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1020,9 +1020,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
+  m_Maskable: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1079,9 +1079,9 @@ MonoBehaviour:
   m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
-  m_isRichText: 1
-  m_EmojiFallbackSupport: 1
-  m_parseCtrlCharacters: 1
+  m_isRichText: 0
+  m_EmojiFallbackSupport: 0
+  m_parseCtrlCharacters: 0
   m_isOrthographic: 1
   m_isCullingEnabled: 0
   m_horizontalMapping: 0
@@ -1090,7 +1090,7 @@ MonoBehaviour:
   m_geometrySortingOrder: 0
   m_IsTextObjectScaleStatic: 0
   m_VertexBufferAutoSizeReduction: 0
-  m_useMaxVisibleDescender: 1
+  m_useMaxVisibleDescender: 0
   m_pageToDisplay: 1
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
@@ -1123,7 +1123,7 @@ Transform:
   m_GameObject: {fileID: 7951037152116720092}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalPosition: {x: 0, y: 2.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1183,7 +1183,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2, y: 1, z: 2}
+  m_Size: {x: 3.6, y: 1, z: 3.6}
   m_Center: {x: 0, y: 2.5, z: 0}
 --- !u!114 &8648901655989746745
 MonoBehaviour:

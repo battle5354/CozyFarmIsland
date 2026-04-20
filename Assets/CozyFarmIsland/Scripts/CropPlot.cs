@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class CropPlot : MonoBehaviour, IInteractable
 {
-    private const float ACTION_TIME = 5f;
-    private const float GROW_TIME = 10f;
+    private const float ACTION_TIME = 1f;
+    private const float GROW_TIME = 2f;
     public enum CropState
     {
         Empty,
@@ -85,7 +85,6 @@ public class CropPlot : MonoBehaviour, IInteractable
     // =========================
     // PUBLIC INTERACTION
     // =========================
-
     public void Interact()
     {
         if (isBusy) return;
@@ -135,7 +134,6 @@ public class CropPlot : MonoBehaviour, IInteractable
     // =========================
     // ROUTINES
     // =========================
-
     private IEnumerator PlantRoutine()
     {
         isBusy = true;
@@ -190,16 +188,20 @@ public class CropPlot : MonoBehaviour, IInteractable
 
         StopToolAction();
 
-        SpawnPickup();
         SetState(CropState.AwaitingPickup);
+
+        if (playerInteractor != null)
+            playerInteractor.ForceClearCurrentInteractable(this);
+
         isBusy = false;
         RefreshSelectionUI();
+
+        SpawnPickup();
     }
 
     // =========================
     // GROWTH
     // =========================
-
     private IEnumerator GrowRoutine(float duration, CropState nextState)
     {
         if (actionTimer == null)
@@ -219,7 +221,6 @@ public class CropPlot : MonoBehaviour, IInteractable
     // =========================
     // STATE LOGIC
     // =========================
-
     private void SetState(CropState newState)
     {
         currentState = newState;
@@ -277,7 +278,6 @@ public class CropPlot : MonoBehaviour, IInteractable
     // =========================
     // TOOL LOGIC
     // =========================
-
     private void ShowTool(GameObject prefab)
     {
         if (toolAnchor == null)
@@ -336,7 +336,6 @@ public class CropPlot : MonoBehaviour, IInteractable
     // =========================
     // UI (TIMER)
     // =========================
-
     private IEnumerator DoActionTimer(float duration)
     {
         if (actionTimer == null)
@@ -354,7 +353,6 @@ public class CropPlot : MonoBehaviour, IInteractable
     // =========================
     // PICKUP
     // =========================
-
     private void SpawnPickup()
     {
         if (pickupPrefab == null)
@@ -372,12 +370,16 @@ public class CropPlot : MonoBehaviour, IInteractable
         var pickup = Instantiate(
             pickupPrefab,
             pickupSpawnPoint.position,
-            pickupSpawnPoint.rotation
+            pickupSpawnPoint.rotation,
+            pickupSpawnPoint
             );
 
         if (pickup.TryGetComponent(out PickupItem item))
         {
             item.Init(this);
+
+            if (playerInteractor != null)
+                playerInteractor.RegisterInteractable(item);
         }
     }
 
@@ -390,17 +392,25 @@ public class CropPlot : MonoBehaviour, IInteractable
     // =========================
     // SELECTION & UI
     // =========================
-
     private void RefreshSelectionUI()
     {
-        bool canCropInteract = CanInteractInCurrentState();
-        bool isAwaitingPickup = currentState == CropState.AwaitingPickup;
+        bool canInteract = IsInteractionAvailable();
 
-        bool showPrompt = isSelected && !isBusy && (canCropInteract || isAwaitingPickup);
-
-        interactPrompt.SetActive(showPrompt);
+        bool showPrompt = isSelected && canInteract;
+        ShowSharedPrompt(showPrompt);
 
         if (TryGetToolAnimator(out var toolAnimator))
-            toolAnimator.SetInteractionReady(isSelected && !isBusy && canCropInteract);
+            toolAnimator.SetInteractionReady(isSelected && canInteract);
+    }
+
+    public bool IsInteractionAvailable()
+    {
+        return !isBusy && CanInteractInCurrentState();
+    }
+
+    public void ShowSharedPrompt(bool show)
+    {
+        if (interactPrompt != null)
+            interactPrompt.SetActive(show);
     }
 }

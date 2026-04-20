@@ -91,7 +91,7 @@ public class PlayerInteractor : MonoBehaviour
         if (!other.TryGetComponent<IInteractable>(out var interactable))
             interactable = other.GetComponentInParent<IInteractable>();
 
-        Debug.Log(interactable != null
+        Debug.LogError(interactable != null
             ? "Interactable found: " + other.name
             : "No IInteractable on: " + other.name);
 
@@ -124,6 +124,13 @@ public class PlayerInteractor : MonoBehaviour
     // =========================
     private void HandleInteractInput()
     {
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            Debug.LogError(currentInteractable != null
+                ? $"Interacting with: {currentInteractable.GetType().Name}"
+                : "No current interactable");
+        }
+
         if (currentInteractable != null && Input.GetKeyDown(KeyCode.E))
         {
             currentInteractable.Interact();
@@ -132,16 +139,21 @@ public class PlayerInteractor : MonoBehaviour
 
     public void PickUp(GameObject item)
     {
+        Debug.LogError("Entered PickUP(item) method. Item = " + item + ", HasItem = " + HasItem + ", carryAnchor = " + carryAnchor + ". Animator = " + animator);
         if (item == null || HasItem || carryAnchor == null)
             return;
+
+        ClearSelectionIfMatches(item);
 
         carriedItem = item;
 
         item.transform.SetParent(carryAnchor);
         item.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
 
-        if (item.TryGetComponent<Collider>(out var itemCollider))
-            itemCollider.enabled = false;
+        if (item.TryGetComponent<PickupItem>(out var pickupItem))
+        {
+            pickupItem.OnPickedUp();
+        }
 
         if (animator != null)
             animator.SetTrigger(PickUpHash);
@@ -151,6 +163,9 @@ public class PlayerInteractor : MonoBehaviour
     {
         if (!HasItem)
             return;
+
+        ClearSelectionIfMatches(carriedItem);
+        UnregisterInteractable(carriedItem.GetComponent<IInteractable>());
 
         Destroy(carriedItem);
         carriedItem = null;
@@ -253,6 +268,9 @@ public class PlayerInteractor : MonoBehaviour
         {
             IInteractable interactable = nearbyInteractables[i];
             if (interactable == null)
+                continue;
+
+            if (!interactable.IsInteractionAvailable())
                 continue;
 
             Transform interactionPoint = interactable.GetInteractionPoint();
@@ -363,6 +381,49 @@ public class PlayerInteractor : MonoBehaviour
     private bool IsInLayerMask(int layer, LayerMask mask)
     {
         return (mask.value & (1 << layer)) != 0;
+    }
+
+    // Clears selection if it matches this object to avoid stale references
+    // when the item is picked up, moved, or destroyed.
+    private void ClearSelectionIfMatches(GameObject targetObject)
+    {
+        if (currentInteractable == null || targetObject == null)
+            return;
+
+        var targetInteractable = targetObject.GetComponent<IInteractable>();
+
+        if (ReferenceEquals(currentInteractable, targetInteractable))
+            ClearCurrentInteractable();
+    }
+
+    // Registers a newly spawned interactable immediately.
+    // This is useful when an interactable appears while the player is already
+    // standing inside its interaction area, so we do not have to wait for
+    // a new trigger enter caused by movement.
+    public void RegisterInteractable(IInteractable interactable)
+    {
+        if (interactable == null)
+            return;
+
+        if (!nearbyInteractables.Contains(interactable))
+            nearbyInteractables.Add(interactable);
+
+        UpdateSelection();
+    }
+
+    public void UnregisterInteractable(IInteractable interactable)
+    {
+        ForceClearCurrentInteractable(interactable);
+        nearbyInteractables.Remove(interactable);
+    }
+
+    public void ForceClearCurrentInteractable(IInteractable interactable)
+    {
+        if (interactable == null)
+            return;
+
+        if (ReferenceEquals(currentInteractable, interactable))
+            ClearCurrentInteractable();
     }
 
     // =========================
