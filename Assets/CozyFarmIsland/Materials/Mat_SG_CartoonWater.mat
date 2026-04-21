@@ -77,7 +77,7 @@ Material:
     - _NearRippleSlimness: 0
     - _NoiseStrength: 0.5
     - _NormalScale: 100
-    - _NormalSpeed: 0.001
+    - _NormalSpeed: 0.005
     - _OuterEnd: 0.7
     - _OuterRadius: 54
     - _OuterStart: 0
@@ -98,7 +98,7 @@ Material:
     - _BaseColor: {r: 0, g: 0.14696707, b: 0.2735849, a: 1}
     - _FarColor: {r: 0, g: 0.24616946, b: 0.509434, a: 1}
     - _FoamColor: {r: 1, g: 1, b: 1, a: 0}
-    - _HorizontalColor: {r: 0.2441705, g: 0.2924528, b: 0.2924528, a: 1}
+    - _HorizontalColor: {r: 0.22467962, g: 0.31132078, b: 0.31132078, a: 1}
     - _IslandCenterWS: {r: 2, g: 0, b: 4, a: 0}
     - _IslandSizeWS: {r: 0, g: 1, b: 0, a: 0}
     - _NearColor: {r: 0, g: 0.5176471, b: 0.30541357, a: 1}

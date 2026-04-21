@@ -112,13 +112,6 @@ public class PlayerInteractor : MonoBehaviour
     // =========================
     private void HandleInteractInput()
     {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            Debug.LogError(currentInteractable != null
-                ? $"Interacting with: {currentInteractable.GetType().Name}"
-                : "No current interactable");
-        }
-
         if (currentInteractable != null && Input.GetKeyDown(KeyCode.E))
         {
             currentInteractable.Interact();
@@ -127,7 +120,6 @@ public class PlayerInteractor : MonoBehaviour
 
     public void PickUp(GameObject item)
     {
-        Debug.LogError("Entered PickUP(item) method. Item = " + item + ", HasItem = " + HasItem + ", carryAnchor = " + carryAnchor + ". Animator = " + animator);
         if (item == null || HasItem || carryAnchor == null)
             return;
 
