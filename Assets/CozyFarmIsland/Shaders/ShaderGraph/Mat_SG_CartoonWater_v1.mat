@@ -57,32 +57,52 @@ Material:
     - _FarDistance: 67.3
     - _FarRippleDencity: 150
     - _FarRippleSlimness: 16
+    - _FoamInnerEnd: -1
+    - _FoamInnerStart: 0
+    - _FoamIntensity: 1
+    - _FoamNoiseScale: 1000
+    - _FoamOuterEnd: 0.78
+    - _FoamOuterStart: 1.99
+    - _FoamSpeed: 0.01
+    - _Gloss: 0.3
     - _GradientPower: 0.917
     - _HorizontalDistance: 150
-    - _IslandRadius: 50
-    - _NearAlpha: 0
+    - _InnerEnd: 1.5
+    - _InnerRadius: 50
+    - _InnerStart: -1.5
+    - _IslandRadius: 80
+    - _NearAlpha: 0.25
     - _NearDistance: 11.4
     - _NearRippleDencity: 126.2
     - _NearRippleSlimness: 0
+    - _NoiseStrength: 0.5
+    - _NormalScale: 100
+    - _NormalSpeed: 0.001
+    - _OuterEnd: 0.7
+    - _OuterRadius: 54
+    - _OuterStart: 0
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _RippleDencity: 137
-    - _RippleSlimness: 10
-    - _RippleSpeed: 1
+    - _RippleDencity: 80
+    - _RippleIntencity: 1
+    - _RippleSlimness: 4.1
+    - _RippleSpeed: 1.5
     - _ShoreEnd: 1.5
     - _ShoreStart: -1.5
     - _Slimness: 10
+    - _Speed: 0.2
     - _WaveHeight: 0.04
     - _WaveScale: 31
     - _WaveSpeed: 0.01
     m_Colors:
     - _BaseColor: {r: 0, g: 0.14696707, b: 0.2735849, a: 1}
-    - _FarColor: {r: 0, g: 0.19440432, b: 0.40392157, a: 1}
-    - _HorizontalColor: {r: 0.30041832, g: 0.39396682, b: 0.4056604, a: 1}
+    - _FarColor: {r: 0, g: 0.24616946, b: 0.509434, a: 1}
+    - _FoamColor: {r: 1, g: 1, b: 1, a: 0}
+    - _HorizontalColor: {r: 0.2441705, g: 0.2924528, b: 0.2924528, a: 1}
     - _IslandCenterWS: {r: 2, g: 0, b: 4, a: 0}
     - _IslandSizeWS: {r: 0, g: 1, b: 0, a: 0}
-    - _NearColor: {r: 0.07358029, g: 0.5176471, b: 0, a: 1}
-    - _RippleColor: {r: 0.014234646, g: 0.015625, b: 0.008475825, a: 1}
+    - _NearColor: {r: 0, g: 0.5176471, b: 0.30541357, a: 1}
+    - _RippleColor: {r: 0.003921569, g: 0.0038902892, b: 0, a: 1}
     - _RippleColor_1: {r: 0, g: 0.049507424, b: 0.30980393, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

@@ -42,14 +42,14 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BaseBrightness: 1
+    - _BaseBrightness: 2
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _RippleDencity: 45.6
+    - _RippleDencity: 75
     - _RipplePower: 7.5
     - _RippleSpeed: 2
-    - _SandTextureDencity: 10
-    - _SandTextureSpeed: 0.01
+    - _SandTextureDencity: 20
+    - _SandTextureSpeed: 0.005
     m_Colors:
     - _BaseColor: {r: 1, g: 0.79815465, b: 0.16509432, a: 1}
     - _RippleColor: {r: 0.125, g: 0.10905426, b: 0, a: 1}

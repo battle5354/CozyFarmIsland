@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class CropPlot : MonoBehaviour, IInteractable
 {
-    private const float ACTION_TIME = 1f;
-    private const float GROW_TIME = 2f;
+    private const float ACTION_TIME = 5f;
+    private const float GROW_TIME = 10f;
     public enum CropState
     {
         Empty,
