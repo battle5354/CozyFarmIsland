@@ -49,6 +49,7 @@ public class PickupItem : MonoBehaviour, IInteractable
 
     public void SetSelected(bool selected)
     {
+        // Pickup reuses the plot's shared interaction prompt instead of owning separate UI.
         if (sourcePlot != null)
             sourcePlot.ShowSharedPrompt(selected && IsInteractionAvailable());
     }
@@ -60,12 +61,12 @@ public class PickupItem : MonoBehaviour, IInteractable
 
     public bool IsInteractionAvailable()
     {
-        bool interactability = player != null && !player.HasItem;
         return player != null && !player.HasItem;
     }
 
     public void OnPickedUp()
     {
+        // Disable interaction trigger after pickup so the carried item cannot be selected again.
         if (interactionCollider != null)
             interactionCollider.enabled = false;
     }

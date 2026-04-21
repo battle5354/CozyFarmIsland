@@ -46,7 +46,6 @@ public class PlayerInteractor : MonoBehaviour
     // =========================
     // INITIALIZATION & UPDATE
     // =========================
-
     private void Awake()
     {
         if (playerTransform == null)
@@ -82,20 +81,12 @@ public class PlayerInteractor : MonoBehaviour
     // =========================
     // TRIGGER DETECTION
     // =========================
-
     private void OnTriggerEnter(Collider other)
     {
         if (!IsInLayerMask(other.gameObject.layer, interactableLayer))
             return;
 
-        if (!other.TryGetComponent<IInteractable>(out var interactable))
-            interactable = other.GetComponentInParent<IInteractable>();
-
-        Debug.LogError(interactable != null
-            ? "Interactable found: " + other.name
-            : "No IInteractable on: " + other.name);
-
-        if (interactable == null)
+        if (!TryResolveInteractable(other, out var interactable))
             return;
 
         if (!nearbyInteractables.Contains(interactable))
@@ -107,10 +98,7 @@ public class PlayerInteractor : MonoBehaviour
         if (!IsInLayerMask(other.gameObject.layer, interactableLayer))
             return;
 
-        if (!other.TryGetComponent<IInteractable>(out var interactable))
-            interactable = other.GetComponentInParent<IInteractable>();
-
-        if (interactable == null)
+        if (!TryResolveInteractable(other, out var interactable))
             return;
 
         if (ReferenceEquals(currentInteractable, interactable))
@@ -256,7 +244,6 @@ public class PlayerInteractor : MonoBehaviour
     // =========================
     // SELECTION LOGIC
     // =========================
-
     private void UpdateSelection()
     {
         CleanupNearbyList();
@@ -316,7 +303,6 @@ public class PlayerInteractor : MonoBehaviour
     // =========================
     // SELECTION APPLICATION
     // =========================
-
     private void ApplySelection(IInteractable newInteractable, float newScore)
     {
         if (currentInteractable == null)
@@ -346,7 +332,6 @@ public class PlayerInteractor : MonoBehaviour
     // =========================
     // SELECTION STATE MANAGEMENT
     // =========================
-
     private void SetCurrentInteractable(IInteractable newInteractable, float newScore)
     {
         if (ReferenceEquals(currentInteractable, newInteractable))
@@ -377,14 +362,13 @@ public class PlayerInteractor : MonoBehaviour
     // =========================
     // HELPERS
     // =========================
-
     private bool IsInLayerMask(int layer, LayerMask mask)
     {
         return (mask.value & (1 << layer)) != 0;
     }
 
-    // Clears selection if it matches this object to avoid stale references
-    // when the item is picked up, moved, or destroyed.
+    // Clear current selection before the object is reparented, picked up, or destroyed
+    // to avoid keeping a stale interactable reference.
     private void ClearSelectionIfMatches(GameObject targetObject)
     {
         if (currentInteractable == null || targetObject == null)
@@ -396,10 +380,8 @@ public class PlayerInteractor : MonoBehaviour
             ClearCurrentInteractable();
     }
 
-    // Registers a newly spawned interactable immediately.
-    // This is useful when an interactable appears while the player is already
-    // standing inside its interaction area, so we do not have to wait for
-    // a new trigger enter caused by movement.
+    // Register newly spawned interactables immediately so they can be selected
+    // even if the player is already standing inside the trigger area.
     public void RegisterInteractable(IInteractable interactable)
     {
         if (interactable == null)
@@ -426,10 +408,23 @@ public class PlayerInteractor : MonoBehaviour
             ClearCurrentInteractable();
     }
 
+    private bool TryResolveInteractable(Collider other, out IInteractable interactable)
+    {
+        interactable = null;
+
+        if (other == null)
+            return false;
+
+        if (other.TryGetComponent<IInteractable>(out interactable))
+            return true;
+
+        interactable = other.GetComponentInParent<IInteractable>();
+        return interactable != null;
+    }
+
     // =========================
     // DEBUG
     // =========================
-
     private void OnDrawGizmosSelected()
     {
         Transform center = playerTransform != null ? playerTransform : transform;

@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class CropPlot : MonoBehaviour, IInteractable
 {
-    private const float ACTION_TIME = 5f;
-    private const float GROW_TIME = 10f;
+    private const float ACTION_TIME = 1f;
+    private const float GROW_TIME = 1f;
     public enum CropState
     {
         Empty,
@@ -14,7 +14,6 @@ public class CropPlot : MonoBehaviour, IInteractable
         NeedsWater2,
         Ready,
         AwaitingPickup,
-        Busy
     }
 
     [Header("Crop Visuals")]
@@ -76,7 +75,6 @@ public class CropPlot : MonoBehaviour, IInteractable
 
     private void Start()
     {
-        Application.targetFrameRate = 60;
         playerInteractor = FindFirstObjectByType<PlayerInteractor>();
         SetState(CropState.Empty);
         RefreshSelectionUI();
@@ -136,67 +134,60 @@ public class CropPlot : MonoBehaviour, IInteractable
     // =========================
     private IEnumerator PlantRoutine()
     {
-        isBusy = true;
-        RefreshSelectionUI();
-        StartToolAction();
-
-        yield return StartCoroutine(DoActionTimer(ACTION_TIME));
-
-        StopToolAction();
-        SetState(CropState.Stage01);
-
-        isBusy = false;
-        RefreshSelectionUI();
-
-        StartCoroutine(GrowRoutine(GROW_TIME, CropState.NeedsWater1));
+        yield return StartCoroutine(PerformTimedAction(ACTION_TIME, () =>
+        {
+            SetState(CropState.Stage01);
+            StartCoroutine(GrowRoutine(GROW_TIME, CropState.NeedsWater1));
+        }));
     }
 
     private IEnumerator WaterRoutine()
     {
         CropState stateBeforeAction = currentState;
 
-        isBusy = true;
-        RefreshSelectionUI();
-        StartToolAction();
-
-        yield return StartCoroutine(DoActionTimer(ACTION_TIME));
-
-        StopToolAction();
-
-        if (stateBeforeAction == CropState.NeedsWater1)
+        yield return StartCoroutine(PerformTimedAction(ACTION_TIME, () =>
         {
-            SetState(CropState.Stage02);
-            isBusy = false;
-            RefreshSelectionUI();
-            StartCoroutine(GrowRoutine(GROW_TIME, CropState.NeedsWater2));
-        }
-        else if (stateBeforeAction == CropState.NeedsWater2)
-        {
-            SetState(CropState.Ready);
-            isBusy = false;
-            RefreshSelectionUI();
-        }
+            if (stateBeforeAction == CropState.NeedsWater1)
+            {
+                SetState(CropState.Stage02);
+                StartCoroutine(GrowRoutine(GROW_TIME, CropState.NeedsWater2));
+            }
+            else if (stateBeforeAction == CropState.NeedsWater2)
+            {
+                SetState(CropState.Ready);
+            }
+        }));
     }
 
     private IEnumerator HarvestRoutine()
+    {
+        yield return StartCoroutine(PerformTimedAction(ACTION_TIME, () =>
+        {
+            SetState(CropState.AwaitingPickup);
+
+            // Clear plot selection before spawning pickup so interaction can switch cleanly
+            // from the plot to the harvested item.
+            if (playerInteractor != null)
+                playerInteractor.ForceClearCurrentInteractable(this);
+
+            SpawnPickup();
+        }));
+    }
+
+    private IEnumerator PerformTimedAction(float duration, System.Action onCompleted)
     {
         isBusy = true;
         RefreshSelectionUI();
         StartToolAction();
 
-        yield return StartCoroutine(DoActionTimer(ACTION_TIME));
+        yield return StartCoroutine(DoActionTimer(duration));
 
         StopToolAction();
 
-        SetState(CropState.AwaitingPickup);
-
-        if (playerInteractor != null)
-            playerInteractor.ForceClearCurrentInteractable(this);
+        onCompleted?.Invoke();
 
         isBusy = false;
         RefreshSelectionUI();
-
-        SpawnPickup();
     }
 
     // =========================
@@ -204,7 +195,7 @@ public class CropPlot : MonoBehaviour, IInteractable
     // =========================
     private IEnumerator GrowRoutine(float duration, CropState nextState)
     {
-        if (actionTimer == null)
+        if (growTimer == null)
         {
             Debug.LogError("RadialTimerUI is not assigned!", this);
             yield break;
@@ -334,7 +325,7 @@ public class CropPlot : MonoBehaviour, IInteractable
     }
 
     // =========================
-    // UI (TIMER)
+    // TIMER UI
     // =========================
     private IEnumerator DoActionTimer(float duration)
     {
@@ -378,6 +369,8 @@ public class CropPlot : MonoBehaviour, IInteractable
         {
             item.Init(this);
 
+            // Register the spawned pickup immediately in case the player is already
+            // inside its trigger range and new trigger enter event will not work.
             if (playerInteractor != null)
                 playerInteractor.RegisterInteractable(item);
         }
@@ -390,7 +383,7 @@ public class CropPlot : MonoBehaviour, IInteractable
     }
 
     // =========================
-    // SELECTION & UI
+    // SELECTION & PROMPT UI
     // =========================
     private void RefreshSelectionUI()
     {
@@ -405,7 +398,8 @@ public class CropPlot : MonoBehaviour, IInteractable
 
     public bool IsInteractionAvailable()
     {
-        return !isBusy && CanInteractInCurrentState();
+        bool playerHasItem = playerInteractor != null && playerInteractor.HasItem;
+        return !isBusy && !playerHasItem && CanInteractInCurrentState();
     }
 
     public void ShowSharedPrompt(bool show)

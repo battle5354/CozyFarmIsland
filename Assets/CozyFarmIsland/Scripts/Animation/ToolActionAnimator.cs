@@ -14,6 +14,7 @@ public class ToolActionAnimator : MonoBehaviour
     private static readonly int IsActingHash = Animator.StringToHash("IsActing");
     private static readonly int DoInteractHash = Animator.StringToHash("DoInteract");
 
+    // Drives idle "ready" presentation when the tool belongs to the currently selected interactable.
     public void SetInteractionReady(bool isReady)
     {
         if (animator == null) return;

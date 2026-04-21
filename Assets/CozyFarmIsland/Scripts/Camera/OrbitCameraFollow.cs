@@ -89,14 +89,12 @@ public class OrbitCameraFollow : MonoBehaviour
 
     private void HandleCursorLock()
     {
-        // Unlock cursor
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
 
-        // Lock cursor with middle mouse
         if (Input.GetMouseButtonDown(2))
         {
             Cursor.lockState = CursorLockMode.Locked;
@@ -186,7 +184,8 @@ public class OrbitCameraFollow : MonoBehaviour
         {
             targetPosition = transform.position;
 
-            // Prevent hidden rotation buildup while camera is blocked
+            // Prevent rotation input from accumulating while the camera is blocked by an obstacle,
+            // which would otherwise cause a sudden jump when the obstacle is gone.
             targetYaw = currentYaw;
             targetPitch = currentPitch;
         }
@@ -203,19 +202,5 @@ public class OrbitCameraFollow : MonoBehaviour
         );
 
         transform.SetPositionAndRotation(smoothedPosition, rotation);
-    }
-
-    public Vector3 GetPlanarForward()
-    {
-        Vector3 forward = transform.forward;
-        forward.y = 0f;
-        return forward.normalized;
-    }
-
-    public Vector3 GetPlanarRight()
-    {
-        Vector3 right = transform.right;
-        right.y = 0f;
-        return right.normalized;
     }
 }

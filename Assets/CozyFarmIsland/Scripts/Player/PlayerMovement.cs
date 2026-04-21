@@ -19,8 +19,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Animator animator;
 
     private CharacterController controller;
-
-    // Values updated during gameplay
     private Vector3 velocity;
     private Vector3 moveDirection;
     private Vector3 horizontalMove;
@@ -30,9 +28,7 @@ public class PlayerMovement : MonoBehaviour
     private bool wasOnGround;
     private bool isMoving;
     private bool isRunning;
-    public bool IsMoving => isMoving;
     public bool LockRotation { get; set; }
-
 
     private void Awake()
     {
@@ -40,6 +36,12 @@ public class PlayerMovement : MonoBehaviour
 
         if (animator == null)
             animator = GetComponentInChildren<Animator>();
+
+        if (cameraTransform == null && Camera.main != null)
+            cameraTransform = Camera.main.transform;
+
+        if (cameraTransform == null)
+            Debug.LogError("PlayerMovement: cameraTransform is not assigned and Camera.main not found!", this);
     }
 
     private void Start()
@@ -62,7 +64,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleMovement()
     {
-        // Get raw keyboard input without smoothing
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
@@ -73,37 +74,29 @@ public class PlayerMovement : MonoBehaviour
         if (isMoving)
         {
             // MOVE DIRECTION
-            // Take the camera forward (-forward) and right (-right) directions
             Vector3 camForward = cameraTransform.forward;
             Vector3 camRight = cameraTransform.right;
 
-            // Reset Y to 0, so the character does not move into the ground or into the air
             camForward.y = 0f;
             camRight.y = 0f;
 
-            // Normalize again because changing Y breaks the original vector length
             camForward.Normalize();
             camRight.Normalize();
 
-            // Convert input into movement relative to the camera direction
             moveDirection = camForward * inputDirection.z + camRight * inputDirection.x;
             bool backwardDominant = vertical < -0.1f && Mathf.Abs(vertical) >= Mathf.Abs(horizontal);
 
             // FACING DIRECTION
-            // Decide which direction the character should face
-            Vector3 facingDirection;
-
             // Face opposite to movement so backward animation really looks backward
+            Vector3 facingDirection;
             facingDirection = backwardDominant ? -moveDirection : moveDirection;
 
             // SPEED
-            // Choose walk or run speed and build horizontal movement vector
             float currentSpeed = isRunning ? runSpeed : walkSpeed;
             horizontalMove = moveDirection * currentSpeed;
 
             // ANIMATOR
-            // Convert current movement into a normalized value for the Blend Tree
-            // Final locomotion value for Animator: from -1 to 1
+            // Signed locomotion value for blend tree: backward = negative, forward = positive.
             float speedPercent = currentSpeed / runSpeed;
             float locomotionSign = backwardDominant ? -1f : 1f;
             moveSpeed = speedPercent * locomotionSign;
@@ -122,7 +115,6 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            // Reset movement values when there is no input
             moveSpeed = 0f;
             horizontalMove = Vector3.zero;
             moveDirection = Vector3.zero;
@@ -168,15 +160,12 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        // Apply gravity every frame so the player goes down after the jump
         velocity.y += gravity * Time.deltaTime;
     }
 
     private void ApplyMovement()
     {
-        // Combine horizontal and vertical movement
         Vector3 totalMove = horizontalMove + new Vector3(0f, velocity.y, 0f);
-        // Move the character and update collisions/grounding
         controller.Move(totalMove * Time.deltaTime);
         // Grounded state becomes correct only after controller.Move()
         isOnGround = controller.isGrounded;
@@ -188,10 +177,7 @@ public class PlayerMovement : MonoBehaviour
 
         float animatorVerticalVelocity = isOnGround ? 0f : velocity.y;
 
-        // Send the current player state to Animator parameters.
-        // The Animator Controller uses these parameters to switch between animation states.
         animator.SetBool("IsOnGround", isOnGround);
-        //animator.SetBool("IsFalling", isFalling);
         animator.SetFloat("VerticalVelocity", animatorVerticalVelocity);
         animator.SetFloat("MoveSpeed", moveSpeed);
     }
