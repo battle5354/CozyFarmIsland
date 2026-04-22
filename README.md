@@ -3,10 +3,10 @@
 Small cozy farm island prototype created for a technical game design test in Unity.
 
 ## Unity Version
-Unity 2022 LTS
+Unity 6000.0.69f1 (Unity 6)
 
 ## Overview
-This project is a small 3D farm island scene with a controllable character and a simple farming gameplay loop.
+This project is a stylized 3D farm island with a controllable character and a simple farming gameplay loop.
 
 Core loop:
 - Plant
@@ -14,15 +14,28 @@ Core loop:
 - Harvest
 - Deliver
 
-## How to Open
-1. Clone the repository
-2. Open the project in Unity Hub (Unity 2022 LTS)
-3. Open scene: Assets/Scenes/MainScene.unity
+## How to Run
+1. Clone the repository  
+2. Open the project via Unity Hub  
+3. Open scene: `Assets/Scenes/MainScene.unity`  
+4. Press Play  
 
 ## Controls
-- WASD — Move
-- Mouse — Camera
-- E — Interact
+
+### Movement
+- WASD - move  
+- Shift - run  
+- Space - jump  
+- Double Space - double jump  
+
+### Interaction
+- E — interact  
+
+### Camera
+- Right Mouse Button - rotate  
+- Mouse Scroll - zoom  
+- Middle Mouse Button - lock/unlock cursor  
 
 ## Status
-Initial project setup
+Work in progress prototype.  
+Core systems (movement, camera, interaction) are implemented, farming loop in progress.
